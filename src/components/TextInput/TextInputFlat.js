@@ -405,6 +405,7 @@ class TextInputFlat extends React.Component<Props, State> {
             ...rest,
             ref: c => {
               this._root = c;
+              this.props.getRef && this.props.getRef(c);
             },
             onChangeText: this._handleChangeText,
             placeholder: label
