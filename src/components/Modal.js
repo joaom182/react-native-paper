@@ -212,8 +212,7 @@ const styles = StyleSheet.create({
   },
   wrapper: {
     ...StyleSheet.absoluteFillObject,
-    justifyContent: 'center',
-    borderWidth: 5
+    justifyContent: 'center'
   },
   content: {
     backgroundColor: 'transparent',
