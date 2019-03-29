@@ -6,8 +6,10 @@ import {
   View,
   Easing,
   StyleSheet,
+  Platform,
   TouchableWithoutFeedback,
   BackHandler,
+  KeyboardAvoidingView
 } from 'react-native';
 import { polyfill } from 'react-lifecycles-compat';
 import Surface from './Surface';
@@ -19,26 +21,26 @@ type Props = {|
    * Determines whether clicking outside the modal dismiss it.
    */
   dismissable?: boolean,
-  /**
-   * Callback that is called when the user dismisses the modal.
-   */
-  onDismiss?: () => mixed,
-  /**
-   * Determines Whether the modal is visible.
-   */
-  visible: boolean,
-  /**
-   * Content of the `Modal`.
-   */
-  children: React.Node,
-  /**
-   * Style for the content of the modal
-   */
-  contentContainerStyle?: any,
-  /**
-   * @optional
-   */
-  theme: Theme,
+    /**
+     * Callback that is called when the user dismisses the modal.
+     */
+    onDismiss ?: () => mixed,
+    /**
+     * Determines Whether the modal is visible.
+     */
+    visible: boolean,
+      /**
+       * Content of the `Modal`.
+       */
+      children: React.Node,
+        /**
+         * Style for the content of the modal
+         */
+        contentContainerStyle ?: any,
+        /**
+         * @optional
+         */
+        theme: Theme,
 |};
 
 type State = {
@@ -89,7 +91,7 @@ class Modal extends React.Component<Props, State> {
     visible: false,
   };
 
-  static getDerivedStateFromProps(nextProps: Props, prevState: State) {
+  static getDerivedStateFromProps (nextProps: Props, prevState: State) {
     if (nextProps.visible && !prevState.rendered) {
       return {
         rendered: true,
@@ -104,7 +106,7 @@ class Modal extends React.Component<Props, State> {
     rendered: this.props.visible,
   };
 
-  componentDidUpdate(prevProps: Props) {
+  componentDidUpdate (prevProps: Props) {
     if (prevProps.visible !== this.props.visible) {
       if (this.props.visible) {
         this._showModal();
@@ -154,15 +156,16 @@ class Modal extends React.Component<Props, State> {
     });
   };
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     BackHandler.removeEventListener('hardwareBackPress', this._handleBack);
   }
 
-  render() {
+  render () {
     if (!this.state.rendered) return null;
 
     const { children, dismissable, theme, contentContainerStyle } = this.props;
     const { colors } = theme;
+    const SurfaceWrapper = Platform.OS === 'ios' ? KeyboardAvoidingView : View
     return (
       <Animated.View
         accessibilityViewIsModal
@@ -179,17 +182,21 @@ class Modal extends React.Component<Props, State> {
             ]}
           />
         </TouchableWithoutFeedback>
-        <View pointerEvents="box-none" style={styles.wrapper}>
+        <SurfaceWrapper
+          {...Platform.OS === 'ios' ? { behavior: 'padding' } : {}}
+          pointerEvents="box-none"
+          style={styles.wrapper}
+        >
           <Surface
             style={[
               { opacity: this.state.opacity },
               styles.content,
-              contentContainerStyle,
+              contentContainerStyle
             ]}
           >
             {children}
           </Surface>
-        </View>
+        </SurfaceWrapper>
       </Animated.View>
     );
   }
@@ -206,6 +213,7 @@ const styles = StyleSheet.create({
   wrapper: {
     ...StyleSheet.absoluteFillObject,
     justifyContent: 'center',
+    borderWidth: 5
   },
   content: {
     backgroundColor: 'transparent',
