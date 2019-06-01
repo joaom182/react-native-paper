@@ -51,8 +51,6 @@ android/app/libs
 android/keystores/debug.keystore
 
 # Build
-#
-dist/
 
 # Release
 #
